@@ -1,5 +1,7 @@
 package com.ia.covid;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -23,11 +25,15 @@ public ModelAndView covidData(HttpServletRequest request,HttpServletResponse res
 	Class.forName("org.postgresql.Driver");
 	Connection con=DriverManager.getConnection("jdbc:postgresql://localhost/student","postgres","password");
 	Statement stmt=con.createStatement();
-	ResultSet result=stmt.executeQuery("SELECT location,total_cases FROM coviddata WHERE new_cases> 1000 GROUP BY location,total_cases ORDER BY sum(new_cases) desc"
+	ResultSet result=stmt.executeQuery("SELECT location,total_cases FROM covidata WHERE new_cases> 1000 GROUP BY location,total_cases,new_cases ORDER BY new_cases desc"
 			+ "");
+	LinkedList l=new LinkedList();
+	LinkedList l1=new LinkedList();
 	while(result.next()) {
-	mv.addObject("l",result.getString(1));
-	mv.addObject("t",result.getString(2));
+	l.add(result.getString(1));
+	l1.add(result.getInt(2));
 	}
+	mv.addObject("location",l);
+	mv.addObject("cases",l1);
 	return mv;
 }}
